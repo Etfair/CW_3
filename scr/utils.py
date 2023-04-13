@@ -2,25 +2,40 @@ import json
 from datetime import datetime
 
 def get_data():
+    """
+    Открытие файла операций
+    :return: Полученные данные
+    """
     with open('operations.json', 'r', encoding='utf-8') as file:
         data = json.load(file)
     return data
 
 def filter_data(data):
+    """
+    Фильтрация операций по статусу Выполнено
+    :return: отфильтрованные данные
+    """
     data = [x for x in data if 'state' in x and x['state'] == 'EXECUTED']
     return data
 
 def sort_data(data):
+    """
+    Сортировка данных по увеличению
+    :return: возвращает 5 последних операций
+    """
     data = sorted(data, key=lambda x: x['date'], reverse=True)
     return data[:5]
 
 def format_data(data):
+    """
+    Извлечение необходимых данных из операций
+    """
     formatted_data = []
     for row in data:
-        date = datetime.strptime(row['date'], '%Y-%m-%dT%H:%M:%S.%f').strftime("%d.%m.%Y")
         description = row['description']
         sender_to = row['to'].split()
         sender_to_bill = sender_to.pop(-1)
+        date = datetime.strptime(row['date'], '%Y-%m-%dT%H:%M:%S.%f').strftime("%d.%m.%Y")
 
         sender_to_bill = f" **{sender_to_bill[-4:]}"
         if "from" in row:
